@@ -1,37 +1,33 @@
-import java.io.IOException;
-import java.util.HashSet;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Authorization {
-    private Set<Account> accounts;
     public Scanner sin=new Scanner (System.in);
 
-    public Authorization(){
-        accounts=new HashSet<>();
-    }
-    public Authorization(String file) throws IOException {
-        accounts= Downloader.downloadAccounts(file);
-    }
-
-    public int signUp() {
+    public String signUp() throws SQLException {
         int accessLevel = 0;
         System.out.println("Введите логин");
         String login = sin.nextLine();
         System.out.println("Введите пароль");
         String password = sin.nextLine();
-        accessLevel = containsAccount(login, password);
-        if (accessLevel == 0) {
-            System.out.println("Такого аккаунта нету");
+        Account account=new Account(login,password,accessLevel);
+        if(containsAccount(account))
+        {
+            ResultSet resultSet=getAccount(account);
+            resultSet.next();
+            if(account.getPassword().equals(resultSet.getString("Password"))){
+                return "Удачного рабочего дня "+resultSet.getString("AccessLevel")+"!";
+            }else {
+                return "Неправильный пароль";
+            }
+        }else
+        {
+            return "Такого аккаунта нету";
         }
-        if (accessLevel == -1) {
-            System.out.println("Неправильный пароль");
-        }
-        return accessLevel;
     }
 
-    public boolean registrationAccount()
-    {
+    public boolean registrationAccount() throws SQLException {
         System.out.println("Введите логин");
         String login=sin.nextLine();
         System.out.println("Введите пароль");
@@ -48,27 +44,24 @@ public class Authorization {
             System.out.println("Такого уровня допуска нету");
             return false;
         }
-        if(accounts.contains(new Account(login,password,accessLevel)))
+        if(containsAccount(new Account(login,password,accessLevel)))
         {
             System.out.println("Такой аккаунт уже есть");
             return false;
         }else
         {
-            accounts.add(new Account(login,password,accessLevel));
+            Uploader.uploadAccount(new Account(login,password,accessLevel));
             return true;
         }
     }
 
-    private int containsAccount(String login, String password) {
-        for (Account account : accounts)
-            if (account.getLogin().equals(login)) {
-                if (account.getPassword().equals(password)) return account.getAccessLevel();
-                else return -1;
-            }
-        return 0;
+    private ResultSet getAccount(Account account)throws SQLException {
+        return Downloader.getAccount(account);
     }
 
-    public void authorizationStop(String fileName) throws IOException {
-        Uploader.uploadAccounts(accounts,fileName);
+    private boolean containsAccount(Account account) throws SQLException {
+        ResultSet resultSet=Downloader.getAccount(account);
+        if(resultSet.next())return true;
+        return false;
     }
 }
