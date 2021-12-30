@@ -1,3 +1,5 @@
+package MenuAndIngredients;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,11 +11,15 @@ public class Dish {
     private static int nextId=1;
     private List<Ingredient> ingredients;
 
-    public Dish(String name, double cost,ArrayList<Ingredient> ingredients) {
+    public int getId() {
+        return id;
+    }
+
+    public Dish(String name, double cost) {
         this.id=nextId++;
         this.name = name;
         this.cost = cost;
-        this.ingredients =new ArrayList<>(ingredients) ;
+        this.ingredients =new ArrayList<>() ;
     }
 
     public String getName() {
@@ -32,9 +38,19 @@ public class Dish {
         this.cost = cost;
     }
 
-    //public Ingredient[] getIngredients() {
-    //    return ingredie;
-    //}
+    public void addIngredient( Ingredient ingredient,double volume){
+        if(ingredients.contains(ingredient))
+            return;
+        ingredient.setVolume(volume);
+        ingredients.add(ingredient);
+    }
+    public void removeIngredient( Ingredient ingredient){
+       if(!ingredients.contains(ingredient))
+           return;
+
+       ingredients.remove(ingredient);
+    }
+
 
     @Override
     public String toString() {
@@ -42,11 +58,8 @@ public class Dish {
                 "name='" + name + '\'' +
                 ", cost=" + cost +
                 ", number=" + id +
-               // ", ingredients=" + Arrays.toString(ingredients) +
+               ", ingredients=" + ingredients +
                 '}';
     }
-
-   // public void setIngredients(Ingredient[] ingredients) {
-    //  this.ingredients = ingredients;
-   // }
+    
 }

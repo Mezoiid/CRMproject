@@ -1,6 +1,18 @@
+package MenuAndIngredients;
+
 public class Ingredient {
 
     private String name;
+    private double volume;
+
+    public double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(double volume) {
+        this.volume = volume;
+    }
+
     private Units unit;
     private int cost;
     private Units unitOfContainer;
@@ -56,14 +68,17 @@ public class Ingredient {
         return unitOfContainer;
     }
 
-    public void setUnitOfContainer(Units unitOfContainer) {
-        this.unitOfContainer = unitOfContainer;
-    }
-
     @Override
     public String toString() {
         return "Ingredient{" +
                 "name='" + name + '\'' +
+                ", volume=" + volume +
+                " " + unit +
                 '}';
     }
+
+    public void setUnitOfContainer(Units unitOfContainer) {
+        this.unitOfContainer = unitOfContainer;
+    }
+
 }

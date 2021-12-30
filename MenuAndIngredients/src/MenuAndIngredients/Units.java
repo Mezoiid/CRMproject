@@ -1,3 +1,5 @@
+package MenuAndIngredients;
+
 public enum Units {
     KILOGRAM(false,1),
     GRAM(false,1000),
